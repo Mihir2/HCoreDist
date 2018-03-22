@@ -2,7 +2,7 @@
 
 src/main/java/HCdist/
 
--->HC.java
--->HCMapper.java
--->HCReducer.java
+-->HC.java\n
+-->HCMapper.java\n
+-->HCReducer.java\n
 -->attributeMean.java
