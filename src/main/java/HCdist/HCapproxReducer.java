@@ -95,12 +95,13 @@ public class HCapproxReducer
 		
 		Configuration config = context.getConfiguration();
 		int numberOfInstances = Integer.parseInt(config.get("numOfInstances"));
-		TreeMap<Double, Integer> tmap = new TreeMap<Double, Integer>();
+		TreeMap<Double, ArrayList<Integer>> tmap = new TreeMap<Double,  ArrayList<Integer>>();
 		
 		int instanceNumberAsValue = -1;
 		
 		for(Text textInstance : mapOutVal){
 			
+			ArrayList<Integer> listOfIndex = new ArrayList<Integer>();
 			instanceNumberAsValue = instanceNumberAsValue + 1;
 			
 			// If the key is 1. Only fetch the payload from mapper: Which in our case is sum.
@@ -114,27 +115,26 @@ public class HCapproxReducer
 				String strDist  = temp[temp.length - 1];
 				Double instanceDistance = Double.parseDouble(strDist);
 				
+				
 				//Find the probability of instance.
 				Double term1 = 0.5 * (1/numberOfInstances);
 				Double term2 = 0.5 * (instanceDistance)/(totalDistance);
 				Double instanceProbability = term1 + term2;
 				
 				if(tmap.containsKey(instanceProbability)){
-					tmap.put((instanceProbability + 0.00000000000000001), instanceNumberAsValue);
+					ArrayList<Integer> tempArrayList = tmap.get(instanceProbability);
+					tempArrayList.add(instanceNumberAsValue);
+					tmap.put(instanceProbability, tempArrayList);
 				}else{
-					tmap.put(instanceProbability, instanceNumberAsValue);
+					listOfIndex.add(instanceNumberAsValue);
+					tmap.put(instanceProbability, listOfIndex);
 				}
-				
-//				context.write(mapOutKey, new Text("TotalDistance: " + totalDistance + " , " + "InstanceDistance: " + instanceNumberAsValue + " , " + "Probability: " + instanceProbability));
 			}
-			
-			Set<Double> set = tmap.keySet();
-			Iterator i = set.iterator();
-			
-			while(i.hasNext()){
-				context.write(mapOutKey, new Text("Key: " + i.next().toString()));
+		}
+		for(Double d : tmap.keySet()){
+			for(Integer i : tmap.get(d)){
+				context.write(mapOutKey, new Text("Key: " + i.toString() + " , Value: " + d));
 			}
-			
 		}
 	}	
 }

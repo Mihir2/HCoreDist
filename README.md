@@ -25,21 +25,24 @@ src/main/java/HCdist/
 
 ## Running the tests
 
-Arguments required:
+Arguments required for the main JAVA file:
 
 ```
-Usage: HC <inputAttrPath> <inputDataPath> <outputPath> <NumOfInstances> <NumOfPartitions>
+HC <inputAttrPath> <inputDataPath> <outputPath> <NumOfInstances> <NumOfPartitions>
+```
+
+Arguments for running jar:
+
+hadoop jar <nameOfJar> <classPath> <inputAttrPath> <inputDataPath> <outputPath> <NumOfInstances> <NumOfPartitions>
+
+```
+hadoop jar HC-Distributed.jar HC-Distributed.HC /attribute.arff /instances.arff /output 20 2
 ```
 
 ## Deployment
 
 //TODO
 
-## Contributing
-
-Professor Haimonti Dutta <br/>
-Akshat Sehgal <br/>
-Mihir Chauhan <br/>
 
 ## Authors
 

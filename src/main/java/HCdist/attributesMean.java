@@ -32,6 +32,8 @@ public class attributesMean {
 	public static String calculate(String attributes, String  dataPath,Configuration conf) throws IOException{
 		String meanString = "";
 		
+		// Reading File
+		System.out.println("Reading file . . ");
 		FileSystem fs = FileSystem.get(conf);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(dataPath))));
 		String data = "";
