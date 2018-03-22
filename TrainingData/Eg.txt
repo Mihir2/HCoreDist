@@ -1,0 +1,8 @@
+0	actualCentroids:#5.846154,122.153846,66.461538,22.615385,64.384615,31.007692,0.314846,38.384615,tested_positive#
+
+approxCentroids:Coresets disabled!
+
+1	actualCentroids:#5.5,130.75,68.5,10.75,49.416667,33.825,0.6755,35,tested_positive#
+
+approxCentroids:%Coresets disabled!%
+
