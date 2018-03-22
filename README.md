@@ -37,14 +37,14 @@ Usage: HC <inputAttrPath> <inputDataPath> <outputPath> <NumOfInstances> <NumOfPa
 
 ## Contributing
 
-Professor Haimonti Dutta
-Akshat Sehgal
-Mihir Chauhan
+Professor Haimonti Dutta <br/>
+Akshat Sehgal <br/>
+Mihir Chauhan <br/>
 
 ## Versioning
 
 ## Authors
 
-Professor Haimonti Dutta
-Akshat Sehgal
-Mihir Chauhan
+Professor Haimonti Dutta <br/>
+Akshat Sehgal <br/>
+Mihir Chauhan <br/>
