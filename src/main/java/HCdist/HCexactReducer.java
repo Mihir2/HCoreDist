@@ -21,7 +21,7 @@ import weka.core.converters.ArffLoader;
 import weka.core.converters.CSVLoader;
 import weka.clusterers.HierarchicalClusterer;
 
-public class HCReducer 
+public class HCexactReducer 
 	extends Reducer<LongWritable, Text, LongWritable, Text>{
 	Double totalDistance = new Double(0.0);
 	public void reduce(LongWritable mapOutKey, Iterable<Text> mapOutVal, Context context)
