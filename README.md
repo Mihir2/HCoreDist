@@ -1,6 +1,4 @@
-# HCoreDist
-
-# Project Title
+# Fast Hierarchical Clustering
 
 Distributed Hierarchical Clustering with Importance Sampling
 
