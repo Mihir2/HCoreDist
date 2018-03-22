@@ -60,7 +60,7 @@ public class HC {
 		FileOutputFormat.setOutputPath(job,new Path(args[2]));
 		
 		job.setMapperClass(HCMapper.class);
-		job.setReducerClass(HCexactReducer.class);
+		job.setReducerClass(HCapproxReducer.class);
 		
 		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(Text.class);

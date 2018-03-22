@@ -86,29 +86,6 @@ public class HCexactReducer
 				context.write(mapOutKey, new Text("Payload: " + t.toString()));
 			}
 		}
-		
-//		
-		//Write newick to output file
-//		for(Text textInstance : mapOutVal){
-//			
-//			// If the key is 1. Only fetch the payload from mapper: Which in our case is sum.
-//			if(mapOutKey.equals(new LongWritable(1))){
-//				totalDistance = Double.parseDouble(textInstance.toString());
-//				context.write(mapOutKey, new Text("Payload from Mapper: TotalDistance: " + totalDistance));
-//			}else{
-//				
-//				//Find the distance of each instance from mean.
-//				String[] temp   = textInstance.toString().split(",");
-//				String strDist  = temp[temp.length - 1];
-//				Double instanceDistance = Double.parseDouble(strDist);
-//				
-//				//Find the probability of instance.
-//				Double term1 = 0.5 * (1/numberOfInstances);
-//				Double term2 = 0.5 * (instanceDistance)/(totalDistance);
-//				Double instanceProbability = term1 + term2;
-//				context.write(mapOutKey, new Text("TotalDistance: " + totalDistance + " , " + "InstanceDistance: " + instanceDistance + " , " + "Probability: " + instanceProbability));
-//			}
-//		}
 	}	
 }
 
