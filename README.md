@@ -41,8 +41,6 @@ Professor Haimonti Dutta <br/>
 Akshat Sehgal <br/>
 Mihir Chauhan <br/>
 
-## Versioning
-
 ## Authors
 
 Professor Haimonti Dutta <br/>
