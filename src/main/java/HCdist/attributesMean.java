@@ -34,6 +34,7 @@ public class attributesMean {
 		
 		// Reading File
 		System.out.println("Reading file . . ");
+		
 		FileSystem fs = FileSystem.get(conf);
 		BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(dataPath))));
 		String data = "";

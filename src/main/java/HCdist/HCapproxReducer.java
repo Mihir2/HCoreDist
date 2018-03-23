@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,10 +95,20 @@ public class HCapproxReducer
 		//Write newick to output file
 		
 		Configuration config = context.getConfiguration();
-		int numberOfInstances = Integer.parseInt(config.get("numOfInstances"));
+		
+		float numberOfInstances    = Float.parseFloat(config.get("numOfInstances"));
+		float numOfPartitions      = Float.parseFloat(config.get("numOfPartitions"));
+		float samplingPercentage   = Float.parseFloat(config.get("samplingPercentage"));
+		String attributes = config.get("attributes");
+		
 		TreeMap<Double, ArrayList<Integer>> tmap = new TreeMap<Double,  ArrayList<Integer>>();
+		HashMap<Integer,Integer> indexMap = new HashMap<Integer, Integer>();
+		indexMap.put(-1, 0);
+		
+		StringBuilder sb = new StringBuilder();
 		
 		int instanceNumberAsValue = -1;
+		String arffString = "";//No attributes attached!
 		
 		for(Text textInstance : mapOutVal){
 			
@@ -115,6 +126,14 @@ public class HCapproxReducer
 				String strDist  = temp[temp.length - 1];
 				Double instanceDistance = Double.parseDouble(strDist);
 				
+				String data     = textInstance.toString().substring(0,textInstance.toString().lastIndexOf(","));
+				arffString      = arffString + "\n" + data;
+				
+				sb.append("\n" + data);
+				
+				//Finding the indexoflinebreak
+				int indexOfLineBreak = arffString.length();
+				indexMap.put(instanceNumberAsValue, indexOfLineBreak);
 				
 				//Find the probability of instance.
 				Double term1 = 0.5 * (1/numberOfInstances);
@@ -131,10 +150,39 @@ public class HCapproxReducer
 				}
 			}
 		}
-		for(Double d : tmap.keySet()){
-			for(Integer i : tmap.get(d)){
-				context.write(mapOutKey, new Text("Key: " + i.toString() + " , Value: " + d));
+		
+		// If the key is 1. Only fetch the payload from mapper: Which in our case is sum.
+		if(!mapOutKey.equals(new LongWritable(1))){
+			int breakCounter = 0;
+			int instancesInPartition = (int) (numberOfInstances/numOfPartitions);
+			float remainingPercentage = (float) (1.0 - (samplingPercentage/100.0));
+			int breakHere = (int) (remainingPercentage * instancesInPartition); 
+			
+			int sumOfDifference = 0;
+			outerLoop:
+			for(Double d : tmap.keySet()){
+				for(Integer i : tmap.get(d)){
+					
+					sumOfDifference += (indexMap.get(i) - indexMap.get(i-1));
+					
+					int start = indexMap.get(i - 1);
+					int end   = indexMap.get(i);
+					
+					String dummyRepeat = new String(new char[end - start]).replace("\0", "~");
+					
+					sb.replace(start, end, dummyRepeat);
+					
+					context.write(mapOutKey, new Text("Start: " + start + "\n End: " + end + "\n"));
+					breakCounter = breakCounter + 1;
+					
+					//context.write(mapOutKey, new Text("Key: " + i.toString() + " , Value: " + d + "BreakCounter: " + breakCounter + " , " + "BreakHere: " + breakHere));
+					if(breakCounter == breakHere){
+						break outerLoop; 
+					}
+				}
 			}
+			String approxArff = sb.toString().replace("~", "");
+			context.write(mapOutKey, new Text("\nArffString: \n" + arffString + "\n\n\n\n ApproxArffString: \n" + approxArff));
 		}
 	}	
 }
