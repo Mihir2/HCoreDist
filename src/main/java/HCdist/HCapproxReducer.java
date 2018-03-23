@@ -31,69 +31,6 @@ public class HCapproxReducer
 	public void reduce(LongWritable mapOutKey, Iterable<Text> mapOutVal, Context context)
 		throws IOException, InterruptedException{
 		
-//		if(!mapOutKey.equals(new LongWritable(1))){
-//			TreeMap<Double, Integer> tmap = new TreeMap<Double, Integer>();
-//			
-//			//Building the Arff string		
-//			//Step 1 - Fetch the attribute from config
-//			Configuration config = context.getConfiguration();
-//			int numberOfInstances = Integer.parseInt(config.get("numOfInstances"));
-//			
-//			String attributes = config.get("attributes");
-//			
-//			//Step 2 - Append attributes and build the Arff data string
-//			String arffString = attributes;
-//			
-//			//Create a string array
-//			StringBuilder sb = new StringBuilder();
-//			
-//			//Total distance this reducer has to compute
-//			Double totalDist = 0.0;
-//			String[] dataArr = new String[1]; 
-//					
-//			for(Text textInstance : mapOutVal){
-//				
-//				// Finding totalDistance and storing each distance
-//				String[] temp   = textInstance.toString().split(",");
-//				String strDist  = temp[temp.length - 1];
-//				Double dist     = Double.parseDouble(strDist);
-//				totalDist      += dist;
-//				String data     = textInstance.toString().substring(0,textInstance.toString().lastIndexOf(","));
-//				arffString      = arffString + "\n" + data;
-//			}
-//			
-//			//Converting String to InputStream.
-//			InputStream inputStream = new ByteArrayInputStream(arffString.getBytes(StandardCharsets.UTF_8));
-//			
-//			//Converting InputStream to ARFF format (DataInstances)
-//			ArffLoader loader = new ArffLoader();
-//			loader.setSource(inputStream);
-//			Instances dataInstances = loader.getDataSet();
-//			
-//			//This is done to set the index on a particular attribute which contains not NaN values
-//			//Manually you could select any attribute you want as you index. For the program to find put -1.
-//			dataInstances.setClassIndex(0);
-//			
-//			//Build Hierarchical Cluster - Parameters("DistanceFunction","NumberOfClusters")
-//			String newick = "";
-//			HierarchicalClusterer HC = new HierarchicalClusterer("Euclidean", 1);
-//			try{
-//				HC.buildClusterer(dataInstances);
-//				newick = HC.graph();
-//			}catch(Exception e){
-//				System.err.println(e);
-//			}
-//			context.write(mapOutKey,new Text(newick));
-//		}
-//		else{
-//			for(Text t : mapOutVal){
-//				context.write(mapOutKey, new Text("Payload: " + t.toString()));
-//			}
-//		}
-		
-//		
-		//Write newick to output file
-		
 		Configuration config = context.getConfiguration();
 		
 		float numberOfInstances    = Float.parseFloat(config.get("numOfInstances"));
@@ -108,7 +45,8 @@ public class HCapproxReducer
 		StringBuilder sb = new StringBuilder();
 		
 		int instanceNumberAsValue = -1;
-		String arffString = "";//No attributes attached!
+		
+		String exactArffData = "";//No attributes attached!
 		
 		for(Text textInstance : mapOutVal){
 			
@@ -127,12 +65,12 @@ public class HCapproxReducer
 				Double instanceDistance = Double.parseDouble(strDist);
 				
 				String data     = textInstance.toString().substring(0,textInstance.toString().lastIndexOf(","));
-				arffString      = arffString + "\n" + data;
+				exactArffData   = exactArffData + "\n" + data;
 				
 				sb.append("\n" + data);
 				
 				//Finding the indexoflinebreak
-				int indexOfLineBreak = arffString.length();
+				int indexOfLineBreak = exactArffData.length();
 				indexMap.put(instanceNumberAsValue, indexOfLineBreak);
 				
 				//Find the probability of instance.
@@ -172,17 +110,53 @@ public class HCapproxReducer
 					
 					sb.replace(start, end, dummyRepeat);
 					
-					context.write(mapOutKey, new Text("Start: " + start + "\n End: " + end + "\n"));
 					breakCounter = breakCounter + 1;
 					
-					//context.write(mapOutKey, new Text("Key: " + i.toString() + " , Value: " + d + "BreakCounter: " + breakCounter + " , " + "BreakHere: " + breakHere));
 					if(breakCounter == breakHere){
 						break outerLoop; 
 					}
 				}
 			}
-			String approxArff = sb.toString().replace("~", "");
-			context.write(mapOutKey, new Text("\nArffString: \n" + arffString + "\n\n\n\n ApproxArffString: \n" + approxArff));
+			
+			String approxArffData = sb.toString().replace("~", "");
+			String approxArff = attributes + approxArffData;
+			
+			String approxNewick = hierarchicalCLustering(approxArff);
+			
+			String exactArff = attributes + exactArffData;
+			String exactNewick = hierarchicalCLustering(exactArff);
+			
+			context.write(mapOutKey, new Text("\nExact-Arff-String: " + exactArffData + 
+											  "\n\nExact Newick: " + exactNewick + 
+											  "\n\nApprox-Arff-String:" + approxArffData + 
+											  "\n\nApprox Newick: " + approxNewick));
 		}
-	}	
+	}
+	
+	public static String hierarchicalCLustering(String arffString) throws IOException{
+		
+		//Converting String to InputStream.
+		InputStream inputStream = new ByteArrayInputStream(arffString.getBytes(StandardCharsets.UTF_8));
+		
+		//Converting InputStream to ARFF format (DataInstances)
+		ArffLoader loader = new ArffLoader();
+		loader.setSource(inputStream);
+		Instances dataInstances = loader.getDataSet();
+		
+		//This is done to set the index on a particular attribute which contains not NaN values
+		//Manually you could select any attribute you want as you index. For the program to find put -1.
+		dataInstances.setClassIndex(0);
+		
+		//Build Hierarchical Cluster - Parameters("DistanceFunction","NumberOfClusters")
+		String newick = "";
+		HierarchicalClusterer HC = new HierarchicalClusterer("Euclidean", 1);
+		try{
+			HC.buildClusterer(dataInstances);
+			newick = HC.graph();
+		}catch(Exception e){
+			System.err.println(e);
+		}
+		
+		return newick;
+	}
 }
