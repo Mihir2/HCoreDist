@@ -15,7 +15,7 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 
-public class attributesMean {
+public class AttributesMean {
 	public static void main(String args[]) throws IOException{
 	}
 	

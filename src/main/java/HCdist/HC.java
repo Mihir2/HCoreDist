@@ -42,7 +42,7 @@ public class HC {
 		System.out.println("\r Read Attributes. . ");
 		
 		//Calculate and pass mean of each attribute to mapper
-		String attrMean = attributesMean.calculate(attributes, args[1], conf);
+		String attrMean = AttributesMean.calculate(attributes, args[1], conf);
 		
 		conf.set("attrMean", attrMean);
 		
