@@ -11,18 +11,11 @@ import java.io.ByteArrayInputStream;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
-import weka.core.converters.CSVLoader;
 import weka.clusterers.HierarchicalClusterer;
 
 public class HCapproxReducer 
@@ -96,12 +89,9 @@ public class HCapproxReducer
 			float remainingPercentage = (float) (1.0 - (samplingPercentage/100.0));
 			int breakHere = (int) (remainingPercentage * instancesInPartition); 
 			
-			int sumOfDifference = 0;
 			outerLoop:
 			for(Double d : tmap.keySet()){
 				for(Integer i : tmap.get(d)){
-					
-					sumOfDifference += (indexMap.get(i) - indexMap.get(i-1));
 					
 					int start = indexMap.get(i - 1);
 					int end   = indexMap.get(i);

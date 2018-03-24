@@ -12,7 +12,6 @@ import weka.core.DistanceFunction;
 import weka.core.EuclideanDistance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader;
-import weka.core.pmml.jaxbbindings.Euclidean;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.conf.Configuration;

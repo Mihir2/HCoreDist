@@ -12,11 +12,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class HC {
 	public static void main(String args[])
@@ -61,6 +57,8 @@ public class HC {
 		conf.set("samplingPercentage", samplingPercentage);
 		
 		System.out.println("Starting Job . . ");
+		
+		@SuppressWarnings("deprecation")
 		Job job = new Job(conf);
 		job.setJarByClass(HC.class);
 		job.setJobName("HC distributed");
